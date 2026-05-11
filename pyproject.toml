@@ -1,0 +1,28 @@
+[project]
+name = "sicnpcf-backend"
+version = "0.1.0"
+description = "SICNPCF backend — Django 5 + 16 apps"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = ["**/migrations/**", "manage.py", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "B", "UP", "DJ"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main"]
+strict = false
+disallow_untyped_defs = false
+
+[tool.django-stubs]
+django_settings_module = "config.settings.development"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.development"
+python_files = ["test_*.py", "*_test.py"]
+testpaths = ["apps"]

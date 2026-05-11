@@ -1,0 +1,34 @@
+name: Deploy to dev
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: JudiSoftTlax/sicnpcf-infra
+          path: infra
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/GitHubActions-sicnpcf-backend
+          aws-region: us-east-1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: CDK deploy ContainerStack to dev
+        working-directory: infra/aws-cdk
+        run: |
+          npm ci
+          npx cdk deploy Sicnpcf-dev-Container --require-approval never -c env=dev
