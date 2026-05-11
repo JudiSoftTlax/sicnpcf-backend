@@ -1,4 +1,4 @@
-name: Build & Push to GHCR
+name: Build & Push to ECR
 on:
   push:
     branches: [develop, main]
@@ -8,20 +8,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
+      id-token: write
       contents: read
-      packages: write
     steps:
       - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - uses: aws-actions/configure-aws-credentials@v4
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/GitHubActions-sicnpcf-backend
+          aws-region: us-east-1
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: ecr
+      - uses: docker/setup-buildx-action@v3
       - uses: docker/metadata-action@v5
         id: meta
         with:
-          images: ghcr.io/judisofttlax/sicnpcf-backend
+          images: ${{ steps.ecr.outputs.registry }}/sicnpcf-dev-backend
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
