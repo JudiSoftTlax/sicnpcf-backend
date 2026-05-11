@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+exclude = ["**/migrations/**", "manage.py", ".venv"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "B", "UP", "DJ"]
@@ -24,3 +25,4 @@ django_settings_module = "config.settings.development"
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.development"
 python_files = ["test_*.py", "*_test.py"]
+testpaths = ["apps"]
