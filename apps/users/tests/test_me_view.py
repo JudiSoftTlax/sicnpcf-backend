@@ -6,13 +6,9 @@ def test_me_returns_user_profile(authenticated_client):
     user, client = authenticated_client(
         role_slug='juez',
         email='juez1@pjet.gob.mx',
-        organo_clave='JF-01',
+        first_name='Ana',
+        last_name='Pérez',
     )
-    # Patch first/last name after creation
-    user.first_name = 'Ana'
-    user.last_name = 'Perez'
-    user.save()
-
     resp = client.get('/api/v1/users/me/')
     assert resp.status_code == 200
     data = resp.json()
