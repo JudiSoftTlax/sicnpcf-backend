@@ -1,21 +1,16 @@
 import pytest
-from rest_framework.test import APIClient
 
-from apps.core.models import Rol
+from apps.users.tests.factories import UserFactory
 
 
 @pytest.fixture
 def juez(db):
-    from django.contrib.auth import get_user_model
-    user = get_user_model()
-    rol = Rol.objects.create(slug='juez', nombre='Juez', portal='interno')
-    return user.objects.create_user(email='juez1@pjet.gob.mx', password='Demo!2026', rol=rol)
+    return UserFactory(email='juez1@pjet.gob.mx', password='Demo!2026')
 
 
 @pytest.mark.django_db
-def test_login_returns_access_and_refresh(juez):
-    client = APIClient()
-    resp = client.post('/api/v1/auth/login/', {
+def test_login_returns_access_and_refresh(juez, api_client):
+    resp = api_client.post('/api/v1/auth/login/', {
         'email': 'juez1@pjet.gob.mx',
         'password': 'Demo!2026',
     }, format='json')
@@ -25,9 +20,8 @@ def test_login_returns_access_and_refresh(juez):
 
 
 @pytest.mark.django_db
-def test_login_rejects_bad_password(juez):
-    client = APIClient()
-    resp = client.post('/api/v1/auth/login/', {
+def test_login_rejects_bad_password(juez, api_client):
+    resp = api_client.post('/api/v1/auth/login/', {
         'email': 'juez1@pjet.gob.mx',
         'password': 'wrong',
     }, format='json')
@@ -35,9 +29,8 @@ def test_login_rejects_bad_password(juez):
 
 
 @pytest.mark.django_db
-def test_login_rejects_unknown_email():
-    client = APIClient()
-    resp = client.post('/api/v1/auth/login/', {
+def test_login_rejects_unknown_email(api_client):
+    resp = api_client.post('/api/v1/auth/login/', {
         'email': 'nobody@pjet.gob.mx',
         'password': 'x',
     }, format='json')
@@ -45,25 +38,22 @@ def test_login_rejects_unknown_email():
 
 
 @pytest.mark.django_db
-def test_login_missing_email_returns_400():
-    client = APIClient()
-    resp = client.post('/api/v1/auth/login/', {'password': 'x'}, format='json')
+def test_login_missing_email_returns_400(api_client):
+    resp = api_client.post('/api/v1/auth/login/', {'password': 'x'}, format='json')
     assert resp.status_code == 400
     assert 'email' in resp.json()
 
 
 @pytest.mark.django_db
-def test_login_missing_password_returns_400():
-    client = APIClient()
-    resp = client.post('/api/v1/auth/login/', {'email': 'x@y.mx'}, format='json')
+def test_login_missing_password_returns_400(api_client):
+    resp = api_client.post('/api/v1/auth/login/', {'email': 'x@y.mx'}, format='json')
     assert resp.status_code == 400
     assert 'password' in resp.json()
 
 
 @pytest.mark.django_db
-def test_login_invalid_email_format_returns_400():
-    client = APIClient()
-    resp = client.post('/api/v1/auth/login/', {
+def test_login_invalid_email_format_returns_400(api_client):
+    resp = api_client.post('/api/v1/auth/login/', {
         'email': 'not-an-email', 'password': 'x',
     }, format='json')
     assert resp.status_code == 400
