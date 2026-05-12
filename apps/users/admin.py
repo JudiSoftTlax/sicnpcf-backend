@@ -10,7 +10,7 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ('rol', 'organo', 'mfa_enabled', 'is_active')
     search_fields = ('email', 'curp', 'first_name', 'last_name')
     ordering = ('email',)
-    fieldsets = UserAdmin.fieldsets + (
+    fieldsets = UserAdmin.fieldsets + (  # type: ignore[operator]
         ('SICNPCF', {'fields': ('curp', 'organo', 'rol', 'institution_id',
                                 'mfa_enabled', 'last_login_ip')}),
     )

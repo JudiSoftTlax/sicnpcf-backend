@@ -43,7 +43,7 @@ class User(AbstractUser, SoftDeleteModel):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    objects = UserManager()
+    objects = UserManager()  # type: ignore[misc, assignment]
 
     class Meta:
         ordering = ['email']
