@@ -12,8 +12,12 @@ from apps.users.serializers import LoginSerializer, UserMeSerializer
 
 @extend_schema(
     request=LoginSerializer,
-    responses={200: {'type': 'object', 'properties': {
-        'access': {'type': 'string'}, 'refresh': {'type': 'string'}}}},
+    responses={
+        200: {'type': 'object', 'properties': {
+            'access': {'type': 'string'}, 'refresh': {'type': 'string'}}},
+        400: {'description': 'Validation error (missing or malformed fields)'},
+        401: {'description': 'Invalid credentials'},
+    },
     tags=['auth'],
 )
 @api_view(['POST'])
@@ -21,7 +25,12 @@ from apps.users.serializers import LoginSerializer, UserMeSerializer
 def login_view(request):
     serializer = LoginSerializer(data=request.data)
     if not serializer.is_valid():
-        raise AuthenticationFailed(detail=serializer.errors)
+        # Distinguish credential errors (raised in validate) from field errors.
+        # Credential errors arrive under 'non_field_errors'; everything else
+        # is a 400.
+        if list(serializer.errors.keys()) == ['non_field_errors']:
+            raise AuthenticationFailed(detail='Credenciales inválidas')
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     tokens = serializer.save()
     return Response(tokens, status=status.HTTP_200_OK)
 
