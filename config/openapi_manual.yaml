@@ -1,0 +1,161 @@
+openapi: 3.1.0
+info:
+  title: SICNPCF API — Ola 2 schemas (planned)
+  version: 0.1.0
+paths:
+  /api/v1/audit/:
+    get:
+      operationId: audit_list
+      tags: [audit]
+      summary: List audit log (admin only)
+      parameters:
+        - {name: actor, in: query, schema: {type: string}}
+        - {name: resource, in: query, schema: {type: string}}
+        - {name: from, in: query, schema: {type: string, format: date-time}}
+        - {name: to, in: query, schema: {type: string, format: date-time}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAuditLog'
+  /api/v1/audit/me/:
+    get:
+      operationId: audit_me_list
+      tags: [audit]
+      summary: List own actions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAuditLog'
+  /api/v1/documents/:
+    post:
+      operationId: documents_create
+      tags: [documents]
+      summary: Upload document
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file: {type: string, format: binary}
+                name: {type: string}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+  /api/v1/documents/{id}/:
+    get:
+      operationId: documents_retrieve
+      tags: [documents]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+  /api/v1/documents/{id}/download-url:
+    get:
+      operationId: documents_download_url_retrieve
+      tags: [documents]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url: {type: string}
+                  expires_in: {type: integer}
+  /api/v1/firma/sign:
+    post:
+      operationId: firma_sign_create
+      tags: [firma]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [document_id, tipo]
+              properties:
+                document_id: {type: string, format: uuid}
+                tipo: {type: string, enum: [firel, simple]}
+                otp: {type: string}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Firma'
+  /api/v1/firma/{id}/verify:
+    get:
+      operationId: firma_verify_retrieve
+      tags: [firma]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valido: {type: boolean}
+                  detalles: {type: object}
+components:
+  schemas:
+    AuditLog:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        actor_username: {type: string}
+        action: {type: string}
+        resource_type: {type: string, nullable: true}
+        resource_id: {type: string, nullable: true}
+        payload: {type: object}
+        ip: {type: string, nullable: true}
+        hash: {type: string}
+        created_at: {type: string, format: date-time}
+    PaginatedAuditLog:
+      type: object
+      properties:
+        count: {type: integer}
+        next: {type: string, nullable: true}
+        previous: {type: string, nullable: true}
+        results:
+          type: array
+          items: {$ref: '#/components/schemas/AuditLog'}
+    Document:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        name: {type: string}
+        mime_type: {type: string}
+        size_bytes: {type: integer}
+        sha256: {type: string}
+        version: {type: integer}
+        prev_version: {type: string, format: uuid, nullable: true}
+        created_at: {type: string, format: date-time}
+    Firma:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        document_id: {type: string, format: uuid}
+        firmante: {type: string}
+        tipo: {type: string, enum: [firel, simple]}
+        hash_firma: {type: string}
+        sello_tiempo: {type: string, format: date-time}
+        created_at: {type: string, format: date-time}

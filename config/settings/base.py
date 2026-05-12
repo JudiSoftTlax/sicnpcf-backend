@@ -137,6 +137,10 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     'CONTACT': {'name': 'SINERGIA SICNPCF Team'},
     'LICENSE': {'name': 'PJET cesion derechos'},
+    'POSTPROCESSING_HOOKS': [
+        'drf_spectacular.hooks.postprocess_schema_enums',
+        'config.openapi_postprocess.merge_manual',
+    ],
 }
 
 LANGUAGE_CODE = 'es-mx'
