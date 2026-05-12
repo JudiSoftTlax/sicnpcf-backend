@@ -26,3 +26,7 @@ django_settings_module = "config.settings.development"
 DJANGO_SETTINGS_MODULE = "config.settings.development"
 python_files = ["test_*.py", "*_test.py"]
 testpaths = ["apps"]
+addopts = "--strict-markers --tb=short --cov=apps --cov-report=term-missing --cov-fail-under=80"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
