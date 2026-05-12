@@ -34,5 +34,7 @@ jobs:
       - run: pip install -r requirements/dev.txt
       - name: Ruff
         run: ruff check .
+      - name: Mypy
+        run: mypy apps/ --ignore-missing-imports
       - name: Pytest
-        run: pytest --cov=apps --cov-report=term-missing
+        run: pytest

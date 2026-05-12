@@ -1,6 +1,11 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from apps.users.auth.interfaces import IInstitutionalDirectory
+
+if TYPE_CHECKING:
+    from apps.users.models import User
 
 
 class LdapDirectory(IInstitutionalDirectory):
@@ -10,5 +15,5 @@ class LdapDirectory(IInstitutionalDirectory):
     y se implementa con python-ldap o ldap3.
     """
 
-    def authenticate(self, *, email: str, password: str) -> Optional['User']:  # noqa: F821
+    def authenticate(self, *, email: str, password: str) -> User | None:
         raise NotImplementedError('LDAP backend pendiente de P-001')

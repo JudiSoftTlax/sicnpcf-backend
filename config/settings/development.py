@@ -10,4 +10,4 @@ ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
 
 if os.environ.get('DATABASE_URL'):
-    DATABASES = {'default': dj_database_url.config(conn_max_age=60)}
+    DATABASES = {'default': dj_database_url.config(conn_max_age=60)}  # type: ignore[dict-item]
