@@ -31,8 +31,8 @@ class MateriaFactory(DjangoModelFactory):
         model = Materia
         django_get_or_create = ('clave',)
 
-    clave = 'familiar'
-    nombre = 'Familiar'
+    clave = factory.Iterator(['civil', 'familiar'])
+    nombre = factory.LazyAttribute(lambda o: o.clave.title())
 
 
 class RolFactory(DjangoModelFactory):
