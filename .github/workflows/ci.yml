@@ -23,6 +23,7 @@ jobs:
       DB_HOST: localhost
       DB_USER: sicnpcf
       DB_PASSWORD: sicnpcf
+      AUDIT_HASH_SECRET: ci-only-audit-hash-secret-not-for-production
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
