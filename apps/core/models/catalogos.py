@@ -16,6 +16,14 @@ PORTAL_CHOICES = [
 
 
 class Materia(TimeStampedModel, SoftDeleteModel):
+    """Catálogo de materias jurisdiccionales (civil, familiar).
+
+    Reservado: actualmente no está wired como FK desde Organo o TipoJuicio
+    (esos usan CharField(choices=MATERIA_CHOICES) para simplicidad). Ola 2
+    puede promover a FK si surge necesidad de metadata adicional por materia
+    (e.g., reglas de turnado por materia, plazos procesales, etc.).
+    """
+
     clave = models.CharField(max_length=20, unique=True, choices=MATERIA_CHOICES)
     nombre = models.CharField(max_length=64)
 
