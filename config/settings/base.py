@@ -1,4 +1,5 @@
 """Base settings — shared across all environments."""
+from datetime import timedelta
 from pathlib import Path
 
 from decouple import Csv, config
@@ -30,9 +31,14 @@ LOCAL_APPS = [
 
 THIRD_PARTY_APPS = [
     'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'drf_spectacular',
     'corsheaders',
     'guardian',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_static',
 ]
 
 DJANGO_APPS = [
@@ -53,6 +59,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -84,14 +91,56 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
+    'DEFAULT_PAGINATION_CLASS': 'apps.core.pagination.StandardResultsSetPagination',
+    'PAGE_SIZE': 25,
 }
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=8),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+}
+
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176',
+    cast=Csv(),
+)
+
+AUTH_BACKEND = config('AUTH_BACKEND', default='local')
+FIRMA_AUTHORITY = config('FIRMA_AUTHORITY', default='stub')
+FIRMA_TSA = config('FIRMA_TSA', default='internal')
+SALAS_BACKEND = config('SALAS_BACKEND', default='mock')
+EMAIL_BACKEND_TOGGLE = config('EMAIL_BACKEND_TOGGLE', default='smtp')
+SMS_BACKEND = config('SMS_BACKEND', default='console')
+FEDERACION_BACKEND = config('FEDERACION_BACKEND', default='local')
+REQUIRE_MFA_ROLES = config('REQUIRE_MFA_ROLES', default='admin_tic', cast=Csv())
+AUDIT_HASH_SECRET = config('AUDIT_HASH_SECRET')
+
+AUTH_USER_MODEL = 'users.User'
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'SICNPCF API',
+    'DESCRIPTION': 'Sistema Integral CNPCyF — Poder Judicial Tlaxcala',
     'VERSION': '0.1.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {'name': 'SINERGIA SICNPCF Team'},
+    'LICENSE': {'name': 'PJET cesion derechos'},
+    'POSTPROCESSING_HOOKS': [
+        'drf_spectacular.hooks.postprocess_schema_enums',
+        'config.openapi_postprocess.merge_manual',
+    ],
 }
 
 LANGUAGE_CODE = 'es-mx'
@@ -107,3 +156,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
 ]
+
+# Disable guardian anonymous user — our User requires a Rol FK
+ANONYMOUS_USER_NAME = None
