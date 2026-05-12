@@ -24,7 +24,7 @@ def test_me_returns_user_profile(juez):
     client = APIClient()
     token = RefreshToken.for_user(juez).access_token
     client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
-    resp = client.get('/api/v1/users/me')
+    resp = client.get('/api/v1/users/me/')
     assert resp.status_code == 200
     data = resp.json()
     assert data['email'] == 'juez1@pjet.gob.mx'
@@ -36,5 +36,5 @@ def test_me_returns_user_profile(juez):
 @pytest.mark.django_db
 def test_me_unauthenticated_returns_401():
     client = APIClient()
-    resp = client.get('/api/v1/users/me')
+    resp = client.get('/api/v1/users/me/')
     assert resp.status_code == 401

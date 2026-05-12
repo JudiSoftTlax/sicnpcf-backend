@@ -18,9 +18,9 @@ def test_logout_blacklists_refresh(juez):
     refresh = RefreshToken.for_user(juez)
     client = APIClient()
     client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
-    resp = client.post('/api/v1/auth/logout', {'refresh': str(refresh)}, format='json')
+    resp = client.post('/api/v1/auth/logout/', {'refresh': str(refresh)}, format='json')
     assert resp.status_code == 204
 
     # second use should fail
-    resp2 = client.post('/api/v1/auth/refresh', {'refresh': str(refresh)}, format='json')
+    resp2 = client.post('/api/v1/auth/refresh/', {'refresh': str(refresh)}, format='json')
     assert resp2.status_code == 401

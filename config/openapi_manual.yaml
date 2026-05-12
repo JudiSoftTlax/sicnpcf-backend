@@ -64,7 +64,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Document'
-  /api/v1/documents/{id}/download-url:
+  /api/v1/documents/{id}/download-url/:
     get:
       operationId: documents_download_url_retrieve
       tags: [documents]
@@ -79,7 +79,7 @@ paths:
                 properties:
                   url: {type: string}
                   expires_in: {type: integer}
-  /api/v1/firma/sign:
+  /api/v1/firma/sign/:
     post:
       operationId: firma_sign_create
       tags: [firma]
@@ -100,7 +100,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Firma'
-  /api/v1/firma/{id}/verify:
+  /api/v1/firma/{id}/verify/:
     get:
       operationId: firma_verify_retrieve
       tags: [firma]

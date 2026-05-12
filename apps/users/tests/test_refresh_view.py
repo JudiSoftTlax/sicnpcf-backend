@@ -17,7 +17,7 @@ def juez(db):
 def test_refresh_returns_new_access(juez):
     refresh = RefreshToken.for_user(juez)
     client = APIClient()
-    resp = client.post('/api/v1/auth/refresh', {'refresh': str(refresh)}, format='json')
+    resp = client.post('/api/v1/auth/refresh/', {'refresh': str(refresh)}, format='json')
     assert resp.status_code == 200
     assert 'access' in resp.json()
 
@@ -25,5 +25,5 @@ def test_refresh_returns_new_access(juez):
 @pytest.mark.django_db
 def test_refresh_rejects_invalid_token():
     client = APIClient()
-    resp = client.post('/api/v1/auth/refresh', {'refresh': 'garbage'}, format='json')
+    resp = client.post('/api/v1/auth/refresh/', {'refresh': 'garbage'}, format='json')
     assert resp.status_code == 401
