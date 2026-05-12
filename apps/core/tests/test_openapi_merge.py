@@ -1,6 +1,5 @@
 from unittest.mock import patch
 
-import pytest
 from rest_framework.test import APIClient
 
 from config.openapi_postprocess import merge_manual

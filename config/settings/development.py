@@ -1,6 +1,8 @@
 """Local dev (`docker compose up`) and AWS Fargate dev environment."""
 import os
+
 import dj_database_url
+
 from .base import *  # noqa
 
 DEBUG = True

@@ -8,11 +8,11 @@ from apps.core.models import Organo, Rol
 @pytest.fixture
 def juez(db):
     from django.contrib.auth import get_user_model
-    User = get_user_model()
+    user = get_user_model()
     organo = Organo.objects.create(clave='JF-01', nombre='Juz Fam 1',
                                     distrito='Tlx', materia='familiar')
     rol = Rol.objects.create(slug='juez', nombre='Juez', portal='interno')
-    return User.objects.create_user(
+    return user.objects.create_user(
         email='juez1@pjet.gob.mx', password='Demo!2026',
         organo=organo, rol=rol,
         first_name='Ana', last_name='Pérez',

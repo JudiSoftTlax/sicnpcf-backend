@@ -7,9 +7,9 @@ from apps.core.models import Rol
 @pytest.fixture
 def juez(db):
     from django.contrib.auth import get_user_model
-    User = get_user_model()
+    user = get_user_model()
     rol = Rol.objects.create(slug='juez', nombre='Juez', portal='interno')
-    return User.objects.create_user(email='juez1@pjet.gob.mx', password='Demo!2026', rol=rol)
+    return user.objects.create_user(email='juez1@pjet.gob.mx', password='Demo!2026', rol=rol)
 
 
 @pytest.mark.django_db

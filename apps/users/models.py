@@ -36,7 +36,7 @@ class User(AbstractUser, SoftDeleteModel):
     organo = models.ForeignKey(Organo, on_delete=models.PROTECT, null=True, blank=True,
                                 related_name='usuarios')
     rol = models.ForeignKey(Rol, on_delete=models.PROTECT, related_name='usuarios')
-    institution_id = models.CharField(max_length=50, null=True, blank=True)
+    institution_id = models.CharField(max_length=50, blank=True, default='')
     mfa_enabled = models.BooleanField(default=False)
     last_login_ip = models.GenericIPAddressField(null=True, blank=True)
 

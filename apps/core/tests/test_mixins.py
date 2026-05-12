@@ -5,7 +5,7 @@ since test-only in-memory models don't have DB tables.
 """
 import pytest
 
-from apps.core.models import Organo, Rol
+from apps.core.models import Organo
 
 
 @pytest.mark.django_db
